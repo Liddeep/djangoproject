@@ -60,8 +60,15 @@ def generate_prompt(initial_prompt, user):
     "{initial_prompt}"
     
     """
-    return generated_prompt.strip(), "system_prompt"
+    return generated_prompt.strip()
 
+def get_control_panel_config(user):
+    control_panel = ControlPanel.objects.filter(user=user).first()
+    return {
+        "temperature": control_panel.temperature if control_panel else 0.7,
+        "max_tokens": control_panel.max_tokens if control_panel else 2048,
+        "context_length": control_panel.context_length if control_panel else 20,
+    }
 
 def ask_ollama(prompt, user):
     """
@@ -70,9 +77,9 @@ def ask_ollama(prompt, user):
     
     try:
         # Obtener la configuración del ControlPanel
-        control_panel = ControlPanel.objects.filter(user=user).first()
-        temperature = control_panel.temperature if control_panel else 0.7  # Valor por defecto
-        max_tokens = control_panel.max_tokens if control_panel else 2048  # Valor por defecto
+        config = get_control_panel_config(user)
+        temperature = config["temperature"]
+        max_tokens = config["max_tokens"]
     except Exception as e:
         return f"Error al obtener configuración: {str(e)}"
 
@@ -93,7 +100,7 @@ def ask_ollama(prompt, user):
         if response.status_code == 200:
             return response.json()["response"]
         else:
-            return "Error: {response.status_code} - {response.text}"
+            return f"Error: {response.status_code} - {response.text}"
     except Exception as e:
         return f"Error en la conexión: {str(e)}"
 
@@ -106,9 +113,9 @@ def ask_deepseek(prompt, user):
 
     # Obtener la configuración del ControlPanel
     try:
-        control_panel = ControlPanel.objects.filter(user=user).first()  # Corrección del método
-        temperature = control_panel.temperature if control_panel else 0.7  # Valor por defecto
-        max_tokens = control_panel.max_tokens if control_panel else 2048  # Valor por defecto
+        config = get_control_panel_config(user)
+        temperature = config["temperature"]
+        max_tokens = config["max_tokens"]
     except Exception as e:
         return f"Error al obtener configuración: {str(e)}"
 
@@ -150,8 +157,8 @@ class ProcessPromptView(APIView):
 
         # Paso 2: Obtener el límite de mensajes del contexto desde el ControlPanel
         try:
-            control_panel = ControlPanel.objects.filter(user=request.user).first()
-            context_length = control_panel.context_length if control_panel else 20  # Valor por defecto
+            config = get_control_panel_config(request.user)
+            context_length = config["context_length"]
         except Exception as e:
             return Response(
                 {"error": f"Error al obtener el contexto: {str(e)}"},
