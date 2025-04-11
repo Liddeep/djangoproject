@@ -12,7 +12,7 @@ class Conversation(models.Model):
     initial_prompt = models.TextField()
     generated_prompt = models.TextField()
     bot_response = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
         return f"User: {self.user.username} | Initial: {self.initial_prompt} | Response: {self.bot_response}"
@@ -27,7 +27,7 @@ class Conversation(models.Model):
                 self.user.control_panels.first()
             )  # Obtén el panel de control del usuario
             context_length = (
-                control_panel.context_length if control_panel else 10
+                control_panel.context_length if control_panel else 20
             )  # Valor por defecto
             session = ChatSessions.objects.filter(
                 user=self.user
