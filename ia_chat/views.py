@@ -20,7 +20,9 @@ def generate_prompt(initial_prompt, user):
         # Obtener las instrucciones del ControlPanel
         control_panel = ControlPanel.objects.filter(user=user).first()
         doctor = control_panel.doctor if control_panel else "Desconocido"
-        doctor_especialidad = control_panel.doctor_especialty if control_panel else "General"
+        doctor_especialidad = (
+            control_panel.doctor_especialty if control_panel else "General"
+        )
         system_prompt = (
             control_panel.system_prompt
             if control_panel and control_panel.system_prompt
@@ -63,6 +65,7 @@ def generate_prompt(initial_prompt, user):
     """
     return generated_prompt.strip()
 
+
 def get_control_panel_config(user):
     control_panel = ControlPanel.objects.filter(user=user).first()
     return {
@@ -71,11 +74,12 @@ def get_control_panel_config(user):
         "context_length": control_panel.context_length if control_panel else 20,
     }
 
+
 def ask_ollama(prompt, user):
     """
     Envía un prompt a Ollama y obtiene la respuesta del modelo.
     """
-    
+
     try:
         # Obtener la configuración del ControlPanel
         config = get_control_panel_config(user)
@@ -91,7 +95,7 @@ def ask_ollama(prompt, user):
         "max_tokens": max_tokens,  # Máximo de tokens en la respuesta
         "stream": False,  # Para obtener una respuesta completa
     }
-    
+
     try:
         response = requests.post(
             settings.OLLAMA_ENDPOINT,
@@ -104,6 +108,7 @@ def ask_ollama(prompt, user):
             return f"Error: {response.status_code} - {response.text}"
     except Exception as e:
         return f"Error en la conexión: {str(e)}"
+
 
 def ask_deepseek(prompt, user):
     """
@@ -180,7 +185,9 @@ class ProcessPromptView(APIView):
         )
 
         # Paso 5: Generar un prompt más elaborado
-        generated_prompt = generate_prompt(initial_prompt, request.user)  # Corrección: se desestructura el retorno
+        generated_prompt = generate_prompt(
+            initial_prompt, request.user
+        )  # Corrección: se desestructura el retorno
         final_prompt = f"{context_messages}\n\n{generated_prompt}"
 
         # Paso 6: Generar un prompt final (opcional, según tu lógica)
@@ -197,7 +204,9 @@ class ProcessPromptView(APIView):
 
         # Paso 7: Enviar el prompt final a Ollama y obtener la respuesta
         try:
-            bot_response = ask_ollama(final_prompt, request.user)  # Corrección: se pasa el usuario como argumento
+            bot_response = ask_ollama(
+                final_prompt, request.user
+            )  # Corrección: se pasa el usuario como argumento
         except Exception as e:
             return Response(
                 {"error": f"Error al obtener la respuesta del modelo: {str(e)}"},

@@ -26,7 +26,10 @@ def ObtenerPerfil(request):
             {"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND
         )
     except Exception as e:
-        return Response({'error': f'Error inesperado: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {"error": f"Error inesperado: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
     serializer = UsuarioGestionSerializer(usuario)
     return Response(serializer.data)
