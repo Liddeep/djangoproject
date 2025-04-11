@@ -179,7 +179,7 @@ class ProcessPromptView(APIView):
         )
 
         # Paso 5: Generar un prompt más elaborado
-        generated_prompt, _ = generate_prompt(initial_prompt, request.user)  # Corrección: se desestructura el retorno
+        generated_prompt = generate_prompt(initial_prompt, request.user)  # Corrección: se desestructura el retorno
         final_prompt = f"{context_messages}\n\n{generated_prompt}"
 
         # Paso 6: Generar un prompt final (opcional, según tu lógica)
