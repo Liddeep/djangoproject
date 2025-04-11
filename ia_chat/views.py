@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from control_panel.models import ControlPanel
 import os
+from django.conf import settings
 
 
 def generate_prompt(initial_prompt, user):
@@ -84,7 +85,7 @@ def ask_ollama(prompt, user):
         return f"Error al obtener configuración: {str(e)}"
 
     payload = {
-        "model": "gemma3:1b",  # Modelo a usar (puedes cambiarlo)
+        "model": settings.OLLAMA_MODEL,
         "prompt": prompt,
         "temperature": temperature,  # Parámetro opcional para controlar la creatividad
         "max_tokens": max_tokens,  # Máximo de tokens en la respuesta
@@ -93,7 +94,7 @@ def ask_ollama(prompt, user):
     
     try:
         response = requests.post(
-            "http://localhost:11434/api/generate",  # Endpoint de Ollama
+            settings.OLLAMA_ENDPOINT,
             json=payload,
         )
 

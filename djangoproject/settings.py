@@ -151,3 +151,7 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
+
+# Ollama API configuration
+OLLAMA_MODEL = "gemma"
+OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
