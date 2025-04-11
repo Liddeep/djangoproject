@@ -20,11 +20,11 @@ def get_jwt_tokens(username, password):
         response = requests.post(
             settings.JWT_AUTH_URL,
             data={"username": username, "password": password},
-            timeout=5,
+            timeout=10,
         )
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("access"), data.get("refresh")
+        response.raise_for_status()  # Lanza una excepción si el código de estado no es 2xx
+        data = response.json()
+        return data.get("access"), data.get("refresh")
     except requests.exceptions.RequestException:
         return None, None
     return None, None
