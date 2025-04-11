@@ -153,5 +153,5 @@ SIMPLE_JWT = {
 }
 
 # Ollama API configuration
-OLLAMA_MODEL = "gemma"
+OLLAMA_MODEL = "gemma3:1b"
 OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
