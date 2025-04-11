@@ -216,7 +216,6 @@ class ProcessPromptView(APIView):
         return Response(
             {
                 "initial_prompt": initial_prompt,
-                "final_prompt": final_prompt,
                 "bot_response": bot_response,
                 "conversation_id": conversation.id,
             },
