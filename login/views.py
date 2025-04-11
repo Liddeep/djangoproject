@@ -27,7 +27,6 @@ def get_jwt_tokens(username, password):
         return data.get("access"), data.get("refresh")
     except requests.exceptions.RequestException:
         return None, None
-    return None, None
 
 
 @csrf_exempt
